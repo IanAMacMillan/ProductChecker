@@ -1,0 +1,38 @@
+import requests, json
+import datetime
+from time import sleep
+
+
+partNums = ["19484253"]
+
+buildUrl(baseUrl, countryCode, languageCode, buCode, productId, productType = PRODUCT_TYPE.ART) {
+    return [
+      baseUrl,
+      encodeURIComponent(this.countryCode),
+      encodeURIComponent(this.languageCode),
+      'stores',
+      buCode,
+      'availability',
+      productType,
+      encodeURIComponent(productId)
+    ].join('/');
+  }
+
+def fetchStatus(partNum):
+    url = "https://api.ingka.ikea.com/cia/availabilities/ru/us?itemNos=" + partNum + "&expand=StoresList,Restocks,SalesLocations"
+    res = requests.get(url)
+    res = json.loads(res.text)
+    print(res)
+    availabilities = res["availabilities"]
+    for item in availabilities:
+        if item["itemKey"]["itemNo"] == partNum:
+            break
+    carry_out = item["buyingOption"]["cashCarry"]
+    carry_out = item["buyingOption"]["clickCollect"]
+    carry_out = item["buyingOption"]["homeDelivery"]
+
+    #soup = BeautifulSoup(page.content, 'html.parser')
+    #status = soup.find(id="part-status").text
+    return #status
+
+fetchStatus(partNums[0])
